@@ -9,6 +9,13 @@
       body {background-color: #bbbbbb;}
       p {color: #333333;}
       img { border: 3px solid black; object-fit: contain; }
+      .multiline { white-space: pre-wrap; }
+      input {
+        width: 6em;
+        text-align: right;
+        direction: rtl;
+      }
+      br { line-height: 150%; }
 
       /* Table style */
       .styled-table {
@@ -45,13 +52,6 @@
       .styled-table tbody tr:last-of-type {
           border-bottom: 2px solid #009879;
       }
-
-      input {
-        width: 6em;
-        text-align: right;
-        direction: rtl;
-      }
-
     </style>
     <script>
       function range(start, end, step = 1) {
@@ -62,50 +62,47 @@
           return ans;
       }
 
-      var yearsOfLoanCache = -1;
-      var tauxCache = -1;
-      var GCache = -1;
-
-      function calculate_g(t, Y) {
-        const array1toY = range(1, Y+1) // 1, 2, ..., Y
+      var G = 0;
+      function compute_G(t, Y) {
+        const array1toY = range(1, Y+1); // 1, 2, ..., Y
 
         const a1 = t / ((1+t)**Y -1);
         const all_a = array1toY.map(i => a1 * (1+t)**(i-1));
 
-        const t0 = Y*t
-        const ta = array1toY.map(i => (Y-i) * all_a[i-1] * t)
+        const t0 = Y*t;
+        const ta = array1toY.map(i => (Y-i) * all_a[i-1] * t);
 
-        const G = t0 - ta.reduce((a, b) => a + b)
-        return G
-      }
-
-      function calculate_g_withCache(t, Y) {
-        if (Y===yearsOfLoanCache && t===tauxCache) {
-          return GCache;
-        }
-        yearsOfLoanCache = Y;
-        tauxCache = t;
-        GCache = calculate_g(t, Y);
-        return GCache;
+        G = t0 - ta.reduce((a, b) => a + b);
+        return G;
       }
 
       function getNumber(name) {
         return Number(document.getElementById(name).value);
       }
-      function setNumber(name, value) {
+      function setInt(name, value) {
         return document.getElementById(name).innerHTML = Math.round(value);
       }
-      function calculate() {
+      function calculate(changingField = 'all') {
         const currentSavings    = getNumber("currentSavings");
         const monthlySavings    = getNumber("monthlySavings");
         const yearsBeforeBuying = getNumber("yearsBeforeBuying");
         const totalIncome       = getNumber("totalIncome");
-        const mensuality        = getNumber("mensuality");
+        if (changingField === 'mensualityEuro') {
+          var mensualityEuro = getNumber("mensualityEuro");
+          var mensualityPerc = mensualityEuro / totalIncome; 
+          document.getElementById("mensualityPerc").value = mensualityPerc;
+        } else {
+          var mensualityPerc = getNumber("mensualityPerc");
+          var mensualityEuro = mensualityPerc*totalIncome;
+          document.getElementById("mensualityEuro").value = mensualityEuro;
+        }
         const taux              = getNumber("taux");
         const yearsOfLoan       = getNumber("yearsOfLoan");
 
-        const G = calculate_g_withCache(taux, yearsOfLoan);
-        const payToBank = totalIncome * mensuality * 12 * yearsOfLoan;
+        if (['taux', 'yearsOfLoan', 'all'].includes(changingField)) {
+          compute_G(taux, yearsOfLoan)
+        }
+        const payToBank = mensualityEuro * 12 * yearsOfLoan;
 
         const budgetInitial = currentSavings + monthlySavings * 12 * yearsBeforeBuying;
         const budgetGotten = payToBank / (1+G);
@@ -113,14 +110,13 @@
 
         const bankInterests = budgetGotten * G
 
-        setNumber("mensualityEuro", mensuality*totalIncome);
-        setNumber("totalSavings", budgetInitial);
-        setNumber("bankLoan", budgetGotten);
-        setNumber("finalBudget", budgetFinal);
+        setInt("totalSavings", budgetInitial);
+        setInt("bankLoan", budgetGotten);
+        setInt("finalBudget", budgetFinal);
       }
 
       window.onload = function() {
-        calculate();
+        calculate('all');
       }
     </script>
   </head>
@@ -139,37 +135,40 @@
       <tr>
         <td>Current savings</td>
         <td>[&#8364;]</td>
-        <td> <input id="currentSavings" type="number" value="10000" step="1000" min="0" onchange="calculate()" /> </td>
+        <td> <input id="currentSavings" type="number" value="10000" step="1000" min="0" onchange="calculate(changingField='currentSavings')" /> </td>
       </tr>
       <tr class="active-row">
         <td>Monthly savings</td>
         <td>[&#8364;/m]</td>
-        <td> <input id="monthlySavings" type="number" value="1000" step="50" min="0" onchange="calculate()" /> </td>
+        <td> <input id="monthlySavings" type="number" value="1000" step="50" min="0" onchange="calculate(changingField='monthlySavings')" /> </td>
       </tr>
       <tr>
         <td>Years before buying</td>
         <td>[y]</td>
-        <td> <input id="yearsBeforeBuying" type="number" value="0" step="1" min="0" max="99" onchange="calculate()" /> </td>
+        <td> <input id="yearsBeforeBuying" type="number" value="0" step="1" min="0" max="99" onchange="calculate(changingField='yearsBeforeBuying')" /> </td>
       </tr>
       <tr>
         <td>Total income</td>
         <td>[&#8364;/m]</td>
-        <td> <input id="totalIncome" type="number" value="2000" step="100" min="0" onchange="calculate()" /> </td>
+        <td> <input id="totalIncome" type="number" value="2000" step="100" min="0" onchange="calculate(changingField='totalIncome')" /> </td>
       </tr>
       <tr>
         <td>Mensuality</td>
-        <td>[%/m]</td>
-        <td> <input id="mensuality" type="number" value="0.33" step="0.01" min="0" max="1" onchange="calculate()" /> </td>
+        <td>[&#8364;/m] <br> [%/m]</td>
+        <td>
+          <input id="mensualityPerc" type="number" value="0.33" step="0.01" min="0" max="1" onchange="calculate(changingField='mensualityPerc')" /> <br>
+          <input id="mensualityEuro" type="number" step="50" onchange="calculate(changingField='mensualityEuro')" /> <br>
+        </td>
       </tr>
       <tr>
         <td>Taux</td>
         <td>[%]</td>
-        <td> <input id="taux" type="number" value="0.03" step="0.001" min="0" max="1" onchange="calculate()" /> </td>
+        <td> <input id="taux" type="number" value="0.03" step="0.001" min="0" max="1" onchange="calculate(changingField='taux')" /> </td>
       </tr>
       <tr>
         <td>Years of loan</td>
         <td>[y]</td>
-        <td> <input id="yearsOfLoan" type="number" value="20" step="1" min="0" max="40" onchange="calculate()" /> </td>
+        <td> <input id="yearsOfLoan" type="number" value="20" step="1" min="0" max="40" onchange="calculate(changingField='yearsOfLoan')" /> </td>
       </tr>
     </table>
 
@@ -179,11 +178,6 @@
         <th>Name</th>
         <th>Unit</th>
         <th>Value</th>
-      </tr>
-      <tr>
-        <td>Mensuality</td>
-        <td>[&#8364;/m]</td>
-        <td id="mensualityEuro"></td>
       </tr>
       <tr>
         <td>Total savings</td>
