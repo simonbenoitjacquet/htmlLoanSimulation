@@ -8,7 +8,8 @@
     <style>
       body {background-color: #ebdbb2;}
       p {color: #282828;}
-      img { border: 3px solid #282828; object-fit: contain; }
+      h1 {padding-left: 20px;}
+      img { border: 2px solid #282828; object-fit: contain; max-width: 90%; max-height:90%;}
       input {
         width: 6em;
         text-align: right;
@@ -33,6 +34,8 @@
       span.unit { display: inline-block; width: 2em; text-align: left }
       span.number { display: inline-block; width: 6em; text-align: right }
       .bold {font-weight:bold}
+      .container { display: flex; }
+      .image { width: 120px; }
 
       /* Table style */
       .styled-table {
@@ -169,7 +172,6 @@
 
   <body>
     <h1>Super loan calculator</h1>
-    <p>This calculator gives many details regarding a loan.</p>
 
     <table class="styled-table table1">
       <tr>
@@ -285,9 +287,16 @@
       </tr>
     </table>
 
-    <h2>About the author</h2>
-    <img src="https://media.licdn.com/dms/image/v2/D4E03AQG0GSUfk1r7mg/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1664202507826?e=2147483647&v=beta&t=e3qElGsnBLvd2xgAXTKNm9HPU3TTE4rYCN7vtW1FY7E" alt="Simon Jacquet Linkedin">
-    <p>This piece of software is brought to you by Simon Jacquet</p>
-    <p>If you like his work, don't hesitate to give him some cookies</p>
+    <!-- <h3>Note from the author</h3> -->
+    <div class="container">
+      <div class="image" >
+        <img src="https://media.licdn.com/dms/image/v2/D4E03AQG0GSUfk1r7mg/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1664202507826?e=2147483647&v=beta&t=e3qElGsnBLvd2xgAXTKNm9HPU3TTE4rYCN7vtW1FY7E" alt="Simon Jacquet image">
+      </div>
+      <div class="text">
+        <p>Hello, this is Simon Jacquet!</p>
+        <p>I hope you like this piece of software :)</p>
+        <p>I've documented what happens under the hood  <a href="https://github.com/simonbenoitjacquet/htmlLoanSimulation">here</a>.</p>
+      </div>
+    </div>
   </body>
 </html>
