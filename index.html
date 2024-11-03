@@ -138,12 +138,10 @@
           var mensualityEuro = getNumber("mensualityEuro");
           var mensualityPerc = mensualityEuro / totalIncome; 
           setNumber("mensualityPerc", mensualityPerc * 100.0, valueField='value', valueType='Float2')
-          // document.getElementById("mensualityPerc").value = mensualityPerc * 100.0;
         } else {
           var mensualityPerc = getNumber("mensualityPerc") / 100.0;
           var mensualityEuro = mensualityPerc*totalIncome;
           setNumber("mensualityEuro", mensualityEuro, valueField='value', valueType='Int')
-          // document.getElementById("mensualityEuro").value = numberWithSpaces(mensualityEuro);
         }
         const taux              = getNumber("taux") / 100.0;
         const yearsOfLoan       = getNumber("yearsOfLoan");
@@ -162,6 +160,11 @@
         setNumber("totalSavings", budgetInitial);
         setNumber("bankLoan", budgetGotten);
         setNumber("finalBudget", budgetFinal);
+
+        // House calculation with regristration fees
+        const registrationFees = getNumber("registrationFees") / 100.0;
+        const housePrice = (1 - registrationFees) * budgetFinal;
+        setNumber("housePrice", housePrice);
       }
 
       window.onload = function() {
@@ -282,6 +285,29 @@
         <td class="bold">Final budget</td>
         <td class="bold">
           <span class="number" id="finalBudget"></span>
+          <span class="unit"><tt>&#8364;</tt></span>
+        </td>
+      </tr>
+    </table>
+
+    <table class="styled-table table2">
+      <tr>
+        <th>House price</th>
+        <th></th>
+      </tr>
+      <tr>
+        <td>Registration fees</td>
+        <td>
+          <input id="registrationFees" value="12.00" onchange="calculate(changingField='registrationFees')" />
+          <span class="unit"><tt>%</tt></span>
+          <button onclick="add('registrationFees', -1.00, valueType='Float2')">-</button>
+          <button onclick="add('registrationFees', 1.00, valueType='Float2')">+</button>
+        </td>
+      </tr>
+      <tr>
+        <td>House price</td>
+        <td>
+          <span class="number" id="housePrice"></span>
           <span class="unit"><tt>&#8364;</tt></span>
         </td>
       </tr>
