@@ -70,12 +70,6 @@
       .styled-table tbody tr.second-twin-cell {
           padding: 0px 15px 12px;
       }
-      /* .styled-table td:last-child { */
-      /* } */
-      /* .styled-table td:nth-child(2) { */
-      /*     font-family: 'Courier Prime'; */
-      /*     text-align: left; */
-      /* } */
       .styled-table tbody tr:last-of-type {
           border-bottom: 2px solid #282828;
       }
@@ -168,11 +162,11 @@
     <h2>Inputs</h2>
     <table class="styled-table table1">
       <tr>
-        <th>Pre-loan parameters</th>
+        <th title="Affects 'Total savings'">Pre-loan parameters</th>
         <th></th>
       </tr>
       <tr>
-        <td>Current savings</td>
+        <td>Savings</td>
         <td>
           <input id="currentSavings" value="10 000" onchange="calculate(changingField='currentSavings')" />
           <span class="unit"><tt>&#8364;</tt></span>
@@ -180,7 +174,7 @@
           <button onclick="add('currentSavings', 1000)">+</button>
         </td>
       </tr>
-      <tr class="active-row">
+      <tr>
         <td>Monthly savings</td>
         <td>
           <input id="monthlySavings" value="1 000" onchange="calculate(changingField='monthlySavings')" />
@@ -190,7 +184,7 @@
         </td>
       </tr>
       <tr>
-        <td>Years before buying</td>
+        <td>Years before loan</td>
         <td>
           <input id="yearsBeforeBuying" value="0" onchange="calculate(changingField='yearsBeforeBuying')" />
           <span class="unit"><tt>y</tt></span>
@@ -201,11 +195,11 @@
     </table>
     <table class="styled-table table1">
       <tr>
-        <th>Loan parameters</th>
+        <th title="Affects 'Bank loan'">Loan parameters</th>
         <th></th>
       </tr>
       <tr>
-        <td>Total income</td>
+        <td>Income</td>
         <td>
           <input id="totalIncome" value="2 000" onchange="calculate(changingField='totalIncome')" />
           <span class="unit"><tt>&#8364;/m</tt></span>
@@ -232,7 +226,7 @@
         </td>
       </tr>
       <tr>
-        <td>Taux</td>
+        <td>Loan rate</td>
         <td>
           <input id="taux" value="0.03" onchange="calculate(changingField='taux')" />
           <span class="unit"><tt>%</tt></span>
@@ -241,7 +235,7 @@
         </td>
       </tr>
       <tr>
-        <td>Years of loan</td>
+        <td>Period</td>
         <td>
           <input id="yearsOfLoan" value="20" onchange="calculate(changingField='yearsOfLoan')" />
           <span class="unit"><tt>y</tt></span>
