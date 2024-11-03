@@ -105,19 +105,25 @@
         const value = document.getElementById(name).value;
         return Number(value.replace(' ',''));
       }
-      function setInt(name, value) {
-        return document.getElementById(name).innerHTML = numberWithSpaces(Math.round(value));
-      }
       function numberWithSpaces(x) {
           return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
       }
-      function add(field, x) {
+      function setNumber(name, value, valueField='innerHTML', valueType='Int') {
+        const valueProcessed =
+          (valueType==='Int') ?
+            numberWithSpaces(Math.round(value))
+          : (valueType==='Float3') ?
+            value.toFixed(3)
+          : (valueType==='Float2') ?
+            value.toFixed(2)
+          :
+            value;
+
+        return document.getElementById(name)[valueField] = valueProcessed;
+      }
+      function add(field, x, valueType='Int') {
         const value = getNumber(field) + x;
-        if (value < 1) {
-          document.getElementById(field).value = value;
-        } else {
-          document.getElementById(field).value = numberWithSpaces(value);
-        }
+        setNumber(field, value, valueField='value', valueType=valueType);
         calculate(changingField = field)
       }
       function calculate(changingField = 'all') {
@@ -128,13 +134,15 @@
         if (changingField === 'mensualityEuro') {
           var mensualityEuro = getNumber("mensualityEuro");
           var mensualityPerc = mensualityEuro / totalIncome; 
-          document.getElementById("mensualityPerc").value = mensualityPerc;
+          setNumber("mensualityPerc", mensualityPerc * 100.0, valueField='value', valueType='Float2')
+          // document.getElementById("mensualityPerc").value = mensualityPerc * 100.0;
         } else {
-          var mensualityPerc = getNumber("mensualityPerc");
+          var mensualityPerc = getNumber("mensualityPerc") / 100.0;
           var mensualityEuro = mensualityPerc*totalIncome;
-          document.getElementById("mensualityEuro").value = numberWithSpaces(mensualityEuro);
+          setNumber("mensualityEuro", mensualityEuro, valueField='value', valueType='Int')
+          // document.getElementById("mensualityEuro").value = numberWithSpaces(mensualityEuro);
         }
-        const taux              = getNumber("taux");
+        const taux              = getNumber("taux") / 100.0;
         const yearsOfLoan       = getNumber("yearsOfLoan");
 
         if (['taux', 'yearsOfLoan', 'all'].includes(changingField)) {
@@ -148,9 +156,9 @@
 
         const bankInterests = budgetGotten * G
 
-        setInt("totalSavings", budgetInitial);
-        setInt("bankLoan", budgetGotten);
-        setInt("finalBudget", budgetFinal);
+        setNumber("totalSavings", budgetInitial);
+        setNumber("bankLoan", budgetGotten);
+        setNumber("finalBudget", budgetFinal);
       }
 
       window.onload = function() {
@@ -223,19 +231,19 @@
       <tr class="second-twin-cell">
         <td></td>
         <td>
-          <input id="mensualityPerc" value="0.33" onchange="calculate(changingField='mensualityPerc')" />
+          <input id="mensualityPerc" value="33.00" onchange="calculate(changingField='mensualityPerc')" />
           <span class="unit"><tt>%/m</tt></span>
-          <button class="small" onclick="add('mensualityPerc', -0.01)">-</button>
-          <button class="small" onclick="add('mensualityPerc', 0.01)">+</button>
+          <button class="small" onclick="add('mensualityPerc', -0.5, valueType='Float2')">-</button>
+          <button class="small" onclick="add('mensualityPerc', 0.5, valueType='Float2')">+</button>
         </td>
       </tr>
       <tr>
         <td>Loan rate</td>
         <td>
-          <input id="taux" value="0.03" onchange="calculate(changingField='taux')" />
+          <input id="taux" value="3.00" onchange="calculate(changingField='taux')" />
           <span class="unit"><tt>%</tt></span>
-          <button onclick="add('taux', -0.001)">-</button>
-          <button onclick="add('taux', 0.001)">+</button>
+          <button onclick="add('taux', -0.05, valueType='Float2')">-</button>
+          <button onclick="add('taux', 0.05, valueType='Float2')">+</button>
         </td>
       </tr>
       <tr>
