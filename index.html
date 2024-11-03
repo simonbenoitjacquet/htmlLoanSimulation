@@ -12,6 +12,12 @@
       input {
         width: 6em;
         text-align: right;
+        background-color: #d5c4a1;
+        border: 1px solid #bdae93;
+      }
+      input:focus{
+        outline: none;
+        box-shadow: 0 0 0 2px #282828;
       }
       br { line-height: 150%; }
       button {
@@ -24,9 +30,9 @@
           height:25px;
           width:35px;
       }
-      .unit {
-        width: 5px;
-      }
+      span.unit { display: inline-block; width: 2em; }
+      span.number { display: inline-block; width: 6em; text-align: right }
+      .bold {font-weight:bold}
 
       /* Table style */
       .styled-table {
@@ -64,13 +70,12 @@
       .styled-table tbody tr.second-twin-cell {
           padding: 0px 15px 12px;
       }
-      .styled-table td:last-child {
-          text-align: right;
-      }
-      .styled-table td:nth-child(2) {
-          font-family: 'Courier Prime';
-          text-align: center;
-      }
+      /* .styled-table td:last-child { */
+      /* } */
+      /* .styled-table td:nth-child(2) { */
+      /*     font-family: 'Courier Prime'; */
+      /*     text-align: left; */
+      /* } */
       .styled-table tbody tr:last-of-type {
           border-bottom: 2px solid #282828;
       }
@@ -163,82 +168,115 @@
     <h2>Inputs</h2>
     <table class="styled-table table1">
       <tr>
-        <th>Name</th>
-        <th></th>
-        <th>Value</th>
+        <th>Pre-loan parameters</th>
         <th></th>
       </tr>
       <tr>
         <td>Current savings</td>
-        <td> <button onclick="add('currentSavings', 1000)">+</button> </td>
-        <td> <input id="currentSavings" value="10 000" onchange="calculate(changingField='currentSavings')" /> [&#8364;] </td>
-        <td> <button onclick="add('currentSavings', -1000)">-</button> </td>
+        <td>
+          <input id="currentSavings" value="10 000" onchange="calculate(changingField='currentSavings')" />
+          <span class="unit"><tt>&#8364;</tt></span>
+          <button onclick="add('currentSavings', -1000)">-</button>
+          <button onclick="add('currentSavings', 1000)">+</button>
+        </td>
       </tr>
       <tr class="active-row">
         <td>Monthly savings</td>
-        <td> <button onclick="add('monthlySavings', 50)">+</button> </td>
-        <td> <input id="monthlySavings" value="1 000" onchange="calculate(changingField='monthlySavings')" /> [&#8364;/m] </td>
-        <td> <button onclick="add('monthlySavings', -50)">-</button> </td>
+        <td>
+          <input id="monthlySavings" value="1 000" onchange="calculate(changingField='monthlySavings')" />
+          <span class="unit"><tt>&#8364;/m</tt></span>
+          <button onclick="add('monthlySavings', -50)">-</button>
+          <button onclick="add('monthlySavings', 50)">+</button>
+        </td>
       </tr>
       <tr>
         <td>Years before buying</td>
-        <td> <button onclick="add('yearsBeforeBuying', 1)">+</button> </td>
-        <td> <input id="yearsBeforeBuying" value="0" onchange="calculate(changingField='yearsBeforeBuying')" /> [y] </td>
-        <td> <button onclick="add('yearsBeforeBuying', -1)">-</button> </td>
+        <td>
+          <input id="yearsBeforeBuying" value="0" onchange="calculate(changingField='yearsBeforeBuying')" />
+          <span class="unit"><tt>y</tt></span>
+          <button onclick="add('yearsBeforeBuying', -1)">-</button>
+          <button onclick="add('yearsBeforeBuying', 1)">+</button>
+        </td>
+      </tr>
+    </table>
+    <table class="styled-table table1">
+      <tr>
+        <th>Loan parameters</th>
+        <th></th>
       </tr>
       <tr>
         <td>Total income</td>
-        <td> <button onclick="add('totalIncome', 100)">+</button> </td>
-        <td> <input id="totalIncome" value="2 000" onchange="calculate(changingField='totalIncome')" /> [&#8364;/m] </td>
-        <td> <button onclick="add('totalIncome', -100)">-</button> </td>
+        <td>
+          <input id="totalIncome" value="2 000" onchange="calculate(changingField='totalIncome')" />
+          <span class="unit"><tt>&#8364;/m</tt></span>
+          <button onclick="add('totalIncome', -100)">-</button>
+          <button onclick="add('totalIncome', 100)">+</button>
+        </td>
       </tr>
       <tr class="first-twin-cell">
         <td>Mensuality</td>
-        <td> <button class="small" onclick="add('mensualityEuro', 50)">+</button> </td>
-        <td> <input id="mensualityEuro" onchange="calculate(changingField='mensualityEuro')" /> [&#8364;/m] </td>
-        <td> <button class="small" onclick="add('mensualityEuro', -50)">-</button> </td>
+        <td>
+          <input id="mensualityEuro" onchange="calculate(changingField='mensualityEuro')" />
+          <span class="unit"><tt>&#8364;/m</tt></span>
+          <button class="small" onclick="add('mensualityEuro', -50)">-</button>
+          <button class="small" onclick="add('mensualityEuro', 50)">+</button>
+        </td>
       </tr>
       <tr class="second-twin-cell">
         <td></td>
-        <td> <button class="small" onclick="add('mensualityPerc', 0.01)">+</button> </td>
-        <td> <input id="mensualityPerc" value="0.33" onchange="calculate(changingField='mensualityPerc')" /> [%/m] </td>
-        <td> <button class="small" onclick="add('mensualityPerc', -0.01)">-</button> </td>
+        <td>
+          <input id="mensualityPerc" value="0.33" onchange="calculate(changingField='mensualityPerc')" />
+          <span class="unit"><tt>%/m</tt></span>
+          <button class="small" onclick="add('mensualityPerc', -0.01)">-</button>
+          <button class="small" onclick="add('mensualityPerc', 0.01)">+</button>
+        </td>
       </tr>
       <tr>
         <td>Taux</td>
-        <td> <button onclick="add('taux', 0.001)">+</button> </td>
-        <td> <input id="taux" value="0.03" onchange="calculate(changingField='taux')" /> [%] </td>
-        <td> <button onclick="add('taux', -0.001)">-</button> </td>
+        <td>
+          <input id="taux" value="0.03" onchange="calculate(changingField='taux')" />
+          <span class="unit"><tt>%</tt></span>
+          <button onclick="add('taux', -0.001)">-</button>
+          <button onclick="add('taux', 0.001)">+</button>
+        </td>
       </tr>
       <tr>
         <td>Years of loan</td>
-        <td> <button onclick="add('yearsOfLoan', 1)">+</button> </td>
-        <td> <input id="yearsOfLoan" value="20" onchange="calculate(changingField='yearsOfLoan')" /> [y] </td>
-        <td> <button onclick="add('yearsOfLoan', -1)">-</button> </td>
+        <td>
+          <input id="yearsOfLoan" value="20" onchange="calculate(changingField='yearsOfLoan')" />
+          <span class="unit"><tt>y</tt></span>
+          <button onclick="add('yearsOfLoan', -1)">-</button>
+          <button onclick="add('yearsOfLoan', 1)">+</button>
+        </td>
       </tr>
     </table>
 
     <h2>Outputs</h2>
     <table class="styled-table table2">
       <tr>
-        <th>Name</th>
-        <th>Unit</th>
-        <th>Value</th>
+        <th>Main information</th>
+        <th></th>
       </tr>
       <tr>
         <td>Total savings</td>
-        <td>[&#8364;]</td>
-        <td id="totalSavings"></td>
+        <td>
+          <span class="number" id="totalSavings"></span>
+          <span class="unit"><tt>&#8364;</tt></span>
+        </td>
       </tr>
       <tr>
         <td>Bank loan</td>
-        <td>[&#8364;]</td>
-        <td id="bankLoan"></td>
+        <td>
+          <span class="number" id="bankLoan"></span>
+          <span class="unit"><tt>&#8364;</tt></span>
+        </td>
       </tr>
       <tr>
-        <td>Final budget</td>
-        <td>[&#8364;]</td>
-        <td id="finalBudget"></td>
+        <td class="bold">Final budget</td>
+        <td class="bold">
+          <span class="number" id="finalBudget"></span>
+          <span class="unit"><tt>&#8364;</tt></span>
+        </td>
       </tr>
     </table>
 
