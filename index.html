@@ -12,9 +12,21 @@
       input {
         width: 6em;
         text-align: right;
-        direction: rtl;
       }
       br { line-height: 150%; }
+      button {
+          height:35px;
+          width:35px;
+          background-color: #bdae93;
+          border: 1px solid #282828;
+      }
+      button.small {
+          height:25px;
+          width:35px;
+      }
+      .unit {
+        width: 5px;
+      }
 
       /* Table style */
       .styled-table {
@@ -24,8 +36,6 @@
           font-family: sans-serif;
           min-width: 400px;
           box-shadow: 0 0 20px #282828;
-          /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); */
-
       }
       .styled-table thead tr {
           background-color: #282828;
@@ -36,12 +46,23 @@
           padding: 12px 15px;
           background: #bdae93;
       }
-      .styled-table td {
+      .table1 td {
+          padding: 5px 15px;
+          background: #d5c4a1;
+      }
+      .table2 td {
           padding: 12px 15px;
           background: #d5c4a1;
       }
       .styled-table tbody tr {
           border-bottom: 1px solid #282828;
+      }
+      .styled-table tbody tr.first-twin-cell {
+          border-bottom: none;
+          padding: 12px 15px 0px;
+      }
+      .styled-table tbody tr.second-twin-cell {
+          padding: 0px 15px 12px;
       }
       .styled-table td:last-child {
           text-align: right;
@@ -78,10 +99,23 @@
       }
 
       function getNumber(name) {
-        return Number(document.getElementById(name).value);
+        const value = document.getElementById(name).value;
+        return Number(value.replace(' ',''));
       }
       function setInt(name, value) {
-        return document.getElementById(name).innerHTML = Math.round(value);
+        return document.getElementById(name).innerHTML = numberWithSpaces(Math.round(value));
+      }
+      function numberWithSpaces(x) {
+          return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+      }
+      function add(field, x) {
+        const value = getNumber(field) + x;
+        if (value < 1) {
+          document.getElementById(field).value = value;
+        } else {
+          document.getElementById(field).value = numberWithSpaces(value);
+        }
+        calculate(changingField = field)
       }
       function calculate(changingField = 'all') {
         const currentSavings    = getNumber("currentSavings");
@@ -95,7 +129,7 @@
         } else {
           var mensualityPerc = getNumber("mensualityPerc");
           var mensualityEuro = mensualityPerc*totalIncome;
-          document.getElementById("mensualityEuro").value = mensualityEuro;
+          document.getElementById("mensualityEuro").value = numberWithSpaces(mensualityEuro);
         }
         const taux              = getNumber("taux");
         const yearsOfLoan       = getNumber("yearsOfLoan");
@@ -127,54 +161,65 @@
     <p>This calculator gives many details regarding a loan.</p>
 
     <h2>Inputs</h2>
-    <table class="styled-table">
+    <table class="styled-table table1">
       <tr>
         <th>Name</th>
-        <th>Unit</th>
+        <th></th>
         <th>Value</th>
+        <th></th>
       </tr>
       <tr>
         <td>Current savings</td>
-        <td>[&#8364;]</td>
-        <td> <input id="currentSavings" type="number" value="10000" step="1000" min="0" onchange="calculate(changingField='currentSavings')" /> </td>
+        <td> <button onclick="add('currentSavings', 1000)">+</button> </td>
+        <td> <input id="currentSavings" value="10 000" onchange="calculate(changingField='currentSavings')" /> [&#8364;] </td>
+        <td> <button onclick="add('currentSavings', -1000)">-</button> </td>
       </tr>
       <tr class="active-row">
         <td>Monthly savings</td>
-        <td>[&#8364;/m]</td>
-        <td> <input id="monthlySavings" type="number" value="1000" step="50" min="0" onchange="calculate(changingField='monthlySavings')" /> </td>
+        <td> <button onclick="add('monthlySavings', 50)">+</button> </td>
+        <td> <input id="monthlySavings" value="1 000" onchange="calculate(changingField='monthlySavings')" /> [&#8364;/m] </td>
+        <td> <button onclick="add('monthlySavings', -50)">-</button> </td>
       </tr>
       <tr>
         <td>Years before buying</td>
-        <td>[y]</td>
-        <td> <input id="yearsBeforeBuying" type="number" value="0" step="1" min="0" max="99" onchange="calculate(changingField='yearsBeforeBuying')" /> </td>
+        <td> <button onclick="add('yearsBeforeBuying', 1)">+</button> </td>
+        <td> <input id="yearsBeforeBuying" value="0" onchange="calculate(changingField='yearsBeforeBuying')" /> [y] </td>
+        <td> <button onclick="add('yearsBeforeBuying', -1)">-</button> </td>
       </tr>
       <tr>
         <td>Total income</td>
-        <td>[&#8364;/m]</td>
-        <td> <input id="totalIncome" type="number" value="2000" step="100" min="0" onchange="calculate(changingField='totalIncome')" /> </td>
+        <td> <button onclick="add('totalIncome', 100)">+</button> </td>
+        <td> <input id="totalIncome" value="2 000" onchange="calculate(changingField='totalIncome')" /> [&#8364;/m] </td>
+        <td> <button onclick="add('totalIncome', -100)">-</button> </td>
       </tr>
-      <tr>
+      <tr class="first-twin-cell">
         <td>Mensuality</td>
-        <td>[&#8364;/m] <br> [%/m]</td>
-        <td>
-          <input id="mensualityEuro" type="number" step="50" onchange="calculate(changingField='mensualityEuro')" /> <br>
-          <input id="mensualityPerc" type="number" value="0.33" step="0.01" min="0" max="1" onchange="calculate(changingField='mensualityPerc')" />
-        </td>
+        <td> <button class="small" onclick="add('mensualityEuro', 50)">+</button> </td>
+        <td> <input id="mensualityEuro" onchange="calculate(changingField='mensualityEuro')" /> [&#8364;/m] </td>
+        <td> <button class="small" onclick="add('mensualityEuro', -50)">-</button> </td>
+      </tr>
+      <tr class="second-twin-cell">
+        <td></td>
+        <td> <button class="small" onclick="add('mensualityPerc', 0.01)">+</button> </td>
+        <td> <input id="mensualityPerc" value="0.33" onchange="calculate(changingField='mensualityPerc')" /> [%/m] </td>
+        <td> <button class="small" onclick="add('mensualityPerc', -0.01)">-</button> </td>
       </tr>
       <tr>
         <td>Taux</td>
-        <td>[%]</td>
-        <td> <input id="taux" type="number" value="0.03" step="0.001" min="0" max="1" onchange="calculate(changingField='taux')" /> </td>
+        <td> <button onclick="add('taux', 0.001)">+</button> </td>
+        <td> <input id="taux" value="0.03" onchange="calculate(changingField='taux')" /> [%] </td>
+        <td> <button onclick="add('taux', -0.001)">-</button> </td>
       </tr>
       <tr>
         <td>Years of loan</td>
-        <td>[y]</td>
-        <td> <input id="yearsOfLoan" type="number" value="20" step="1" min="0" max="40" onchange="calculate(changingField='yearsOfLoan')" /> </td>
+        <td> <button onclick="add('yearsOfLoan', 1)">+</button> </td>
+        <td> <input id="yearsOfLoan" value="20" onchange="calculate(changingField='yearsOfLoan')" /> [y] </td>
+        <td> <button onclick="add('yearsOfLoan', -1)">-</button> </td>
       </tr>
     </table>
 
     <h2>Outputs</h2>
-    <table class="styled-table">
+    <table class="styled-table table2">
       <tr>
         <th>Name</th>
         <th>Unit</th>
